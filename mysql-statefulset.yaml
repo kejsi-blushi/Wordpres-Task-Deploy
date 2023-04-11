@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-statefulset
+  namespace: db
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: mysql-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql 
+    spec:
+      containers:
+      - name: mysql
+        image: mysql
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          value: wordpress
+        - name:  MYSQL_USER
+          value: kejsi
+        - name: MYSQL_PASSWORD
+          value: kejsi2001
+        - name: MYSQL_RANDOM_ROOT_PASSWORD
+          value: '1'
+
+        volumeMounts:
+          - mountPath: "/var/lib/mysql"
+            name: mysql-pv
+      volumes:
+      - name: mysql-pv
+        persistentVolumeClaim:
+          claimName: sql-persistent-volume-claim
+      
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sql-persistent-volume-claim
+  namespace: db
+spec:
+  storageClassName: "hostpath"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+
+
+

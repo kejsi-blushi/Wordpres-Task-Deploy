@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubectl log
+  namespace: web
+spec:
+  selector:
+    app: wordpress
+  ports:
+    - protocol: TCP
+      port: 2000
+      targetPort: 80
